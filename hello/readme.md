@@ -28,7 +28,7 @@
 24. base: 数组是定长的，切片是随意的
 25. [size]type: 指针数组，存放指针的数组
 26. pointer: 多重指针，即指向指针的指针。 var a **int // 二重指针
-27. strcut: s结构体指针  var c *Book = &book
+27. struct: s结构体指针  var c *Book = &book
 28. pointer: 自动类型推断的指针 c := &book
 29. func: 函数接收参数时，指定为 func c(c *Book){} // 这里要结构体类型
 30. slice: 是数组的抽象
@@ -37,7 +37,18 @@
 33. slice: var s []type = make([]type,len) 
 34. slice: slice := make([]type,len)
 35. make([]T, length, capacity) // 类型，长度，容量
-36. 
+36. slice: a := []int{1,2,3} s := a[start:end] // end > cap(a) 会报错
+37. slice: s := []int{} var s []int ,分别用 s == nil 判断，前一个不为nil 
+38. printf: %x 以16进制输出， %d以10进制输出
+39. copy: copy(target, origin)（只针对slice），当target的cap小于origin，只copy target.cap个
+40. range: for k,v = range f{} // f可以是array,slice,channel,map,
+41. range: for _,v = range "你好"
+42. map: map是引用类型，一个地方修改会影响到所有地方
+43. map: 跟slice一样，会自动扩容
+44. map: 始终建议用make来初始化
+45. map: 杰哥： 一般不用多维，多维一般用struct
+46. map: 多维数组看有没有初始化可以用 == nil来判断，为了程序的安全性
+47. 
 ```
 
 
