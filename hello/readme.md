@@ -48,9 +48,57 @@
 44. map: 始终建议用make来初始化
 45. map: 杰哥： 一般不用多维，多维一般用struct
 46. map: 多维数组看有没有初始化可以用 == nil来判断，为了程序的安全性
-47. 
+47. strconv: 类型转换
+48. 类型转换的时候一定要处理error，不然我估计要崩溃
+49. interface: 接口太自由了
+50. interface: 任何其他类型实现了这些方法就是实现了这个接口。必须全部实现
+51. goroutine: 所有goroutine共享一个地址空间
+52. goroutine: 异步的，普通方法是同步的
+53. goroutine: go func_name(...param)
+53. channel： c := make(chan int)
+54. channel： 在make的时候可以设置是否有缓冲区
+55. channel： 如果无缓冲区，那么读写都是原子性的。意思会阻塞其他协程写
+56. channel： 无缓冲就会导致竞争，这没问题吧？所以高并发怎么玩？
+57. channel： 有缓冲区，如果没写满，就会一直写，不会竞争
+58. channel： 有缓冲区，如果写满了，就要等有人来读，不然一直等，可能 deadlock
 ```
 
+### 对比PHP
+#### interface
+1. 相同之处：
+    ```
+    关键字都是interface；
+    都是约定一些待实现的方法
+   都需要全部实现接口里面的方才算实现了这个接口
+    ```
+2. 不同之处：
+    ```
+    
+    ```
+
+### 并发
+#### 关键字 go chan
+#### 怎么玩的？
+```go
+package main
+import "fmt"
+
+func main(){
+	// goroutine简单输出
+	go test(1) // 1
+	test(2) // 2
+}
+
+func test(a int){
+	println(a)
+}
+
+```
+这里需要注意的是，因为协程是异步的，如果 `2` 也用 `go test(2)`，就会导致main退出。然后就不执行
+
+#### 无缓冲chan
+
+#### [带缓冲channel死锁演示](./chanDL.go)
 
 
 ## 关键字
