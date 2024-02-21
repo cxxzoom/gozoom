@@ -93,6 +93,9 @@ func clearScreen(count int) {
 	//}
 	cmd := exec.Command("cmd", "/c", "cls")
 	cmd.Stdout = os.Stdout
-	cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		log.Printf("Command finished with error: %v", err)
+	}
 	log.Println("1 min modify wake password...")
 }
