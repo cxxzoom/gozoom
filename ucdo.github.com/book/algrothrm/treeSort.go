@@ -21,11 +21,11 @@ type tree struct {
 
 func main() {
 	values := []int{9, 2, 1, 5, 6, 3, 8, 2, 0, 9, -1, -3, -5}
-	sort(values)
+	Sort(values)
 	fmt.Println(values)
 }
 
-func sort(values []int) {
+func Sort(values []int) {
 	var root *tree
 	for _, v := range values {
 		// 这里把值放到树里面

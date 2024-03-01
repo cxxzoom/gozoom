@@ -9,6 +9,34 @@ type employee struct {
 	Position string
 }
 
+type point struct {
+	x, y int
+}
+
+type circle struct {
+	point  point
+	Radius int
+}
+
+type wheel struct {
+	circle circle
+	spokes int
+}
+
+type point2 struct {
+	x, Y int
+}
+
+type circle2 struct {
+	point2
+	Radius int
+}
+
+type wheel2 struct {
+	circle2
+	Spokes int
+}
+
 var e employee
 
 func main() {
@@ -28,11 +56,57 @@ func main() {
 	values := []int{15, 4, 3, 2, 1, 8, 2, 234, 5, 567}
 	sort2(values)
 	fmt.Println(values)
+
+	fmt.Println("++++++++++++++++++++++++++++")
+	fmt.Println(e)
+	editS(&e)
+	fmt.Println(e)
+
+	// 初始化并获取地址
+	_ = &employee{ID: 111}
+	pp1 := new(employee)
+	*pp1 = employee{ID: 1211}
+	fmt.Println("++++++++++++++++++++++++++++")
+	mm := make(map[employee]int)
+	key := employee{
+		ID:       0,
+		Name:     "",
+		Salary:   0,
+		Position: "",
+	}
+	mm[key]++
+	for k, v := range mm {
+		fmt.Println(k, v)
+	}
+	key.ID = 11111
+
+	for k, v := range mm {
+		fmt.Println(k.ID, v)
+	}
+
+	w := wheel{
+		circle: circle{
+			point: point{
+				x: 1,
+				y: 11,
+			},
+			Radius: 2,
+		},
+		spokes: 8,
+	}
+
+	fmt.Printf("%#v", w)
+	var ffff wheel2
+	ffff.x = 1
 }
 
 func getId(id *employee) *employee {
 	id.ID = 0001
 	return id
+}
+
+func editS(s *employee) {
+	s.Name = "xxxxxxx"
 }
 
 type tree2 struct {
