@@ -27,7 +27,7 @@ func negative(a int) int {
 func square(n int) int     { return n * n }
 func product(m, n int) int { return m * n }
 
-func squares() func() int {
+func squares1() func() int {
 	var x int
 	return func() int {
 		x++

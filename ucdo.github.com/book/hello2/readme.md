@@ -154,6 +154,7 @@
 ```
 
 跟PHParray的区别
+
 ``` 
 1. age["keyyyy"] 如果key不存在，不会报错
 2. 每次遍历的顺序，php是一致的；而go的map不确定
@@ -164,8 +165,8 @@
 7. 
 ```
 
-
 ## 结构体 struct
+
 ``` 
 1. 可以是复合类型
 2. 里面可以引用struct本身
@@ -185,6 +186,7 @@
 ```
 
 ### json
+
 ``` 
 1. 发送和接收结构化数据的解析，类似的还有xml，protobuf
 2. 标准库 encoding/json
@@ -199,13 +201,111 @@
 ```
 
 ## 函数 func
+
 ``` 
 1. 指针，slice(切片)、map、function、channel等类型，实参可能会由于函数的间接引用被修改。
 2. 任何进行I/O操作的函数都会面临出现错误的可能，只有没有经验的程序员才会相信读写操作不会失败
 3. 居然也可以像PHP一样，把方法名赋予变量，然后通过 v() 调用
 ```
 
+## 匿名函数
+
+``` 
+1. 捕获迭代变量：这里很容易出问题
+2. 看个1 的例子
+    var rmdirs []func()
+    for _, d := range tempDirs() {
+        dir := d // NOTE: necessary!
+        os.MkdirAll(dir, 0755) // creates parent directories too
+        rmdirs = append(rmdirs, func() {
+            os.RemoveAll(dir)
+        })
+    }
+    // ...do some work…
+    for _, rmdir := range rmdirs {
+        rmdir() // clean up
+    }
+
+    代码的第三行为什么要这么操作？ 因为后面的匿名函数记录的是
+    运行时变量的内存地址，如果直接赋值d的话，d就是最后一次迭代的值了，
+    那么所有的删除操作都变成对 最后一个文件的删除操作了
+
+3. 为了解决2上的问题，通常引入一个同名的局部变量
+    for _, dir := range tempDirs() {
+        dir := dir // declares inner dir, initialized to outer dir
+        // ...
+    }
+
+    go programming language 写到
+4. 不仅仅是for range有这个问题，fori，go，defer都有这个问题
+5. go或者defer会等循环结束之后再执行，所以4
+6. 函数内的匿名函数可以访问包括返回值在内的所有变量
+
+
+```
+
+## 可变参数 -> 参数的数量不确定
+
+```
+1. sum(val ...int) 这里可以传多个int类型的参数
+2. 调用者会创建一个匿名数组来装接收值
+3. 怎么向sum里面传 int类型的slice？
+4. s := []int{1,2,3,4} sum(s...)
+```
+
+## defer
+
+```
+1. 好用的defer
+2. 一个日志记录的例子
+    func bigSlowOperation(){
+        defer trace("some msg")()
+    }
+
+    func trace(msg string) func(){
+        timeStart := time.Now()
+        log.Printf("%s is start...\n",msg)
+        return func(){
+            log.Printf("%s is ending, cost time %s",msg,time.Since(timeStart))
+        }
+    }
+3. defer语句中的函数会在return语句更新返回值变量后再执行
+4. 特别注意： 在fori，forr中defer会在最后才执行
+5. 
+```
+
+## panic
+
+```
+1. 运行时错误会导致panic，比如数组越界，空指针引用
+2. 发生panic时，会导致程序中断-》并输出堆栈跟踪信息-》
+   通常，我们不需要再次运行程序去定位问题，日志信息已经提供了足够的诊断依据（一定什么事都要记录日志）
+3. 由于panic会引起程序的崩溃，因此panic一般用于严重错误，如程序内部的逻辑不一致
+4. 对于大部分漏洞，我们应该使用Go提供的错误机制，而不是panic，尽量避免程序的崩溃
+5. 
+```
+
+## recover -> 从panic中恢复正常
+
+```
+1. 不加区分的恢复所有的panic异常，不是可取的做法
+2. 你不应该试图去恢复其他包引起的panic
+3. 你也不应该恢复一个由他人开发的函数引起的panic
+4. 安全的做法是有选择性的recover
+5. 换句话说，只恢复应该被恢复的panic异常
+6. 恢复的异常占比应该尽可能低
+7. >< 自己测试了，如果recover会导致一些问题
+```
+
+## 方法 （OOP）
+``` 
+1. 封装和组合
+2. 
+```
+
+
 ## 错误
+
 ``` 
 1. 虽然Go有各种异常机制，但这些机制仅被使用在处理那些未被预料到的错误，
    即bug，而不是那些在健壮程序中应该被避免的程序错误
@@ -213,7 +313,6 @@
     防止错误发生，之后是函数的实际逻辑。   
 3. 
 ```
-
 
 ## 类型转换
 
