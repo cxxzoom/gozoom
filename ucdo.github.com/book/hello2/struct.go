@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/url"
+)
 
 type employee struct {
 	ID       int
@@ -146,4 +149,33 @@ func appendValues(value []int, tree *tree2) []int {
 	}
 
 	return value
+}
+
+// An intList  is a linked list of integers
+// A nil *intList represents empty list
+type intList struct {
+	Value int
+	Tail  *intList
+}
+
+func (list *intList) sum() int {
+	if list == nil {
+		return 0
+	}
+
+	return list.Value + list.Tail.Value
+}
+
+func urlValues() {
+	m := url.Values{"lang": {"en"}}
+	m.Add("item", "1")
+	m.Add("item", "2")
+
+	fmt.Println(m.Get("lang"))
+
+	fmt.Println(m.Get("lang"))
+
+	fmt.Println(m.Get("lang"))
+
+	fmt.Println(m.Get("item"))
 }
