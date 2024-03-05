@@ -1,22 +1,25 @@
 package main
+
 import "fmt"
 
-func main(){
+func main() {
 	fmt.Println("hello world")
 	var (
 		a string
-		b int
+		//b int
 	)
 
 	a = "xxx"
-	b = 7
-	var xxx string = "123"
-	var xxx1 = "xxx1"
-	fmt.Println(a,b,xxx,xxx1)
-	xxxmm,b,err := funcCall()
-	fmt.Println(xxxmm,b,err)
+	// b = 7
+	// var xxx string = "123"
+	// var xxx1 = "xxx1"
+	// fmt.Println(a,b,xxx,xxx1)
+	// xxxmm,b,err := funcCall()
+	// fmt.Println(xxxmm,b,err)
+
+	fmt.Println("\n%p\n", &a)
 }
 
-func funcCall()(string,int,error){
-	return "xxx",1,nil
+func funcCall() (string, int, error) {
+	return "xxx", 1, nil
 }
