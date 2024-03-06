@@ -305,6 +305,55 @@
 2. 
 ```
 
+## 嵌入结构体扩展类型
+``` 
+1. 
+    import "image/color"
+
+    type Point struct{ X, Y float64 }
+    
+    type ColoredPoint struct {
+        Point
+        Color color.RGBA
+    }
+2. 看段代码举个例子
+    package main
+
+    import (
+        "fmt"
+        "image/color"
+        "math"
+    )
+    
+    type Point struct {
+        x, y float64
+    }
+    
+    type ColorPoint struct {
+        Point
+        Color color.RGBA
+    }
+    //上面的代码里，ColorPoint里面 嵌入得有Point，但是ColorPoint并不是Point的子类；而是组合
+    //概括：内嵌字段会指导编译器去生成额外的包装方法来委托已经声明好的方法
+    //举个例子：
+    func (q Point) Distance(p Point) {
+    }
+    // 然后Point内嵌到了ColorPoint里面
+    // 编译器生成额外的包装方法
+    func (c ColorPoint) Distance(p Point){
+        return c.Point.Distance(p)
+    }
+3. 还可以有指针类型的内嵌
+    type Cp struct {
+        *Point
+        Color color.RGBA
+    }
+    // 这种写法的话，就相当于字段和方法都会被间接引入到当前类型（但是需要通过指针去获取）
+    // 例子
+    a := Cp{&Point{1,2},color.RGBA{0,0,0,0}}
+    a.Distance(*a.Point)
+```
+
 ## 基于指针的对象方法
 ```
 1. 约定： 如果Point类有一个指针作为接收器的方法，那么所有的
