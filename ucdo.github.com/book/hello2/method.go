@@ -118,3 +118,17 @@ func (path Path) xxxx(offset Point, isAdd bool) {
 		path[i] = op(path[i], offset)
 	}
 }
+
+// TODO 看看这里的代码怎么改
+func (path Path) xx2(offset Point, isAdd bool) {
+	var op func(p, q Point) Point
+	if isAdd {
+		op = Point.Add
+	} else {
+		op = Point.Sub
+	}
+
+	for i := range path {
+		path[i] = op(path[i], offset)
+	}
+}
