@@ -65,6 +65,10 @@ func main() {
 	path := Path{{1, 1, 2, 2}, {0, 0, 0, 0}}
 	path.xxxx(p, true)
 	fmt.Println(path)
+	p = Point{1, 1, 1, 1}
+	path = Path{{1, 1, 2, 2}, {0, 0, 0, 0}}
+	path.xx1(p, true)
+	fmt.Println(path)
 }
 
 func Distance(p, q Point) float64 {
@@ -119,16 +123,14 @@ func (path Path) xxxx(offset Point, isAdd bool) {
 	}
 }
 
-// TODO 看看这里的代码怎么改
-func (path Path) xx2(offset Point, isAdd bool) {
-	var op func(p, q Point) Point
-	if isAdd {
-		op = Point.Add
-	} else {
-		op = Point.Sub
-	}
-
+// 上面的xxxx() 和这个方法是一个意思，只是一个看起来花哨点？
+func (path Path) xx1(offset Point, isAdd bool) {
 	for i := range path {
-		path[i] = op(path[i], offset)
+		if isAdd {
+			path[i] = path[i].Add(offset)
+		} else {
+			path[i] = path[i].Sub(offset)
+		}
+
 	}
 }
