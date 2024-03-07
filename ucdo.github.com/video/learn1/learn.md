@@ -70,3 +70,44 @@ cosnt(
 ### 在本地启一个godoc的文档服务
 godoc -http=:8080  
 然后通过127.0.0.1:8080
+
+## 编码问题
+中文是按照 UTF8存储的，占3个字节  
+光是用fori遍历会出问题  
+
+
+## for range
+会自动处理，如果是utf8，则按utf8输出  
+比如遍历 s:= "hello 中文"  
+fori 遍历会乱码，但是for range不会
+
+
+## 类型转换
+go里面没有隐式转换，只有强制类型转换
+### 修改一个字符串
+必须要转换成[]byte或者[]rune类型才能操作  
+看看代码  
+```
+// 修改字符串： 要先转换成[]rune或者[]byte类型才能操作
+	// []byte强制类型转换
+	s1 := "xxxx"
+	// 这里其实也只是一个copy
+	byteArr := []byte(s1)
+	fmt.Println(byteArr)
+	byteArr[0] = 'X'
+	fmt.Println(byteArr)
+	fmt.Println(string(byteArr))
+	fmt.Println(s1)
+
+	sx := "hello"
+	sxx := []byte(sx)
+	j := len(sxx) - 1
+	for i := 0; i < len(sxx); i++ {
+		if i == j || i > j {
+			break
+		}
+		sxx[i],sxx[j] = sxx[j],sxx[i]
+		j--
+	}
+	fmt.Println(string(sxx))
+```
