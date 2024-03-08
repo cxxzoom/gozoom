@@ -44,7 +44,7 @@ cosnt(
 )
 ```
 1. iota只能在常量里面使用
-2. iota在consts里面，没新增一行变量申明就会加一
+2. iota在consts里面，每新增一行变量申明就会加一
     ```
     const (
         a = iota // 0
