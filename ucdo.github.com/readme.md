@@ -538,7 +538,48 @@ print	println real	recover string  true	uint	uint8	uintptr
 9. 对接口的值进行比较时，只有非常确定能比较的值才进行比较，否则有panic的可能
 10. 同样，interface的值作为switch操作数或者map的key的时候，也可能panic
 11. net/http 包的试用 /book/http*.go
+12. 类型断言 Type Assertion : 判断接口变量里的值是否属于某个具体的类型
+13. 类型分支 : 像switch case一样，根据具体的类型做相应的操作；
+    例如 https://golang-china.github.io/gopl-zh/ch7/ch7-14.html中Exec操作这里
+15. 接口设计: ask only for what you need（只考虑你需要的东西）
+16. 并不是任何事物都需要呗当作一个对象，独立的函数或者未封装的数据类型也各有他们的好处
 ```
+
+## gorountine 
+```
+1. 跟踪调试并发程序还是很困难
+2. 线性程序中形成的直觉往往会使我们误入歧途
+3. 可以把gorountine 类比线程（但是并不是）
+4. 一个程序启动时，主函数运行在一个独立的gorountine里，称为main rountine
+5. 新的gorountine会使用go语句创建
+6. 主函数返回时，所有gorountine都会被直接打断，程序退出
+7. 
+```
+
+
+
+## channel
+
+``````
+1. gorountine 的通讯机制
+2. ch := make(chan T) // ch就只能发送T这种类型的数据
+3. 跟map一样，都是对底层数据结构的引用（复制，传参都是引用）
+4. channel的零值也是nil
+5. 类型相同的channel可以通过  == 比较
+6. 发送和接收都用 <- 
+7. close(ch) 关闭通道；后续的基于该channel的任何发送操作都会导致panic
+8. close(ch)之后，还是可以接收之前已经发送成功的数据
+9. 如果channel中没有数据，将给零值
+10. 无缓冲channel  make(chan int) // unbuffered channel
+11. 无缓冲的channel： 发送者goroutine发送之后被阻塞，等到另一个gorouutine从相同的channel里接收了数据，然后继续执行各自后续的语句；接收者先发生，那么接收者也会被阻塞，直到另一个goroutine向相同的channel里面发送数据
+12. 无缓冲channel：发送和接收都会导致两个goroutine做一次同步操作做；所以也被称之为 同步channels
+13. x事件在y事件之前发生 happends before
+14. 串联的channels（Pipeline） 管道
+15. x,ok := <-ch  !ok 代表通道已经关闭了并且没有值可以接收
+16. 重复关闭一个channel、试图关闭为nil的channel，都会导致panic异常
+17. 关闭channel会触发广播机制
+``````
+
 
 
 ## 错误
