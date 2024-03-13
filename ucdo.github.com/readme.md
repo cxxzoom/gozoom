@@ -578,6 +578,24 @@ print	println real	recover string  true	uint	uint8	uintptr
 15. x,ok := <-ch  !ok 代表通道已经关闭了并且没有值可以接收
 16. 重复关闭一个channel、试图关闭为nil的channel，都会导致panic异常
 17. 关闭channel会触发广播机制
+18. 单向channel： chan<- T 只发送； <-chan T 只接收
+19. 单项channel： 关闭操作只用于断言不再发送新的数据；所以发送方才会调用；接收方close会编译错误
+20. chan int 可以转为 chan<- int 或者 <-chan int ；反之则不行
+21. 带缓存的channel：
+22. ch := make(chan T, cap)
+23. 发送：从队尾写入；读取：从队头读取
+24. 满了还发则阻塞；空的还读也阻塞
+25. 这玩意儿还不能当成队列使用（slice可以当成队列使用）
+26. 多个goroutine并发向同一个channel发送数据，或者从同一个channel接收数据都是常见的
+27. 泄露的goroutine不会被gc
+28. goroutine泄露：
+    func query() string {
+        ch := make(chan string) // channel without buffer
+        go func(){ch <- request("xxx.com")}()
+        go func(){ch <- request("xxx.com")}()
+        go func(){ch <- request("xxx.com")}()
+        return <-ch
+    }
 ``````
 
 
