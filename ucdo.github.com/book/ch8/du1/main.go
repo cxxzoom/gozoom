@@ -6,13 +6,16 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sync"
+	"time"
 )
 
-func walDir(dir string, fileSize chan<- int64) {
+func walDir(dir string, fileSize chan<- int64, wg *sync.WaitGroup) {
 	for _, entry := range scanDir(dir) {
 		if entry.IsDir() {
+			wg.Add(1)
 			subDir := filepath.Join(dir, entry.Name())
-			walDir(subDir, fileSize)
+			go walDir(subDir, fileSize, wg)
 		} else {
 			info, err := entry.Info()
 			if err != nil {
@@ -33,40 +36,52 @@ func scanDir(dir string) []fs.DirEntry {
 	return fs
 }
 
+var verbose = flag.Bool("v", false, "show verbose progress messages")
+
 func main() {
 
 	flag.Parse()
 	roots := flag.Args()
 	if len(roots) == 0 {
-		roots = []string{`e:\`}
+		roots = []string{`e:\phpenv`}
 	}
 
+	var wg sync.WaitGroup
 	fileSize := make(chan int64, 1)
+	for _, dir := range roots {
+		wg.Add(1)
+		go walDir(dir, fileSize, &wg)
+	}
+
 	go func() {
-		for _, dir := range roots {
-			fmt.Println(dir)
-			walDir(dir, fileSize)
-		}
+		wg.Wait()
 		close(fileSize)
 	}()
 
 	var files, bytes int64
-	// go func() {
-	// 	for size := range fileSize {
-	// 		files++
-	// 		bytes += size
-	// 	}
-	// }()
+	go func() {
+		for size := range fileSize {
+			files++
+			bytes += size
+		}
+	}()
 
+	var tick <-chan time.Time
+	if *verbose {
+		tick = time.Tick(500 * time.Millisecond)
+	}
+loop:
 	for {
 		select {
-		case x := <-fileSize:
+		case x, ok := <-fileSize:
+			if !ok {
+				break loop
+			}
 			files++
 			bytes += x
-		default:
-			break
+		case <-tick:
+			fmt.Printf("%d files  %.1f GB\n", files, float64(bytes)/1e9)
 		}
 	}
 
-	fmt.Printf("%d files  %.1f GB\n", files, float64(bytes)/1e9)
 }

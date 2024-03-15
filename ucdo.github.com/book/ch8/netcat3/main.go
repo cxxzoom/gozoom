@@ -23,6 +23,7 @@ func main() {
 	mustCopy(conn, os.Stdin)
 	conn.Close()
 	<-done
+	os.Exit(1)
 }
 
 func mustCopy(dst io.Writer, src io.Reader) {

@@ -600,6 +600,38 @@ print	println real	recover string  true	uint	uint8	uintptr
 
 
 
+## 并发
+
+``````
+1. 什么是并发？不能确定x,y执行的先后顺序
+2. 在并发的条件下，函数能够正确地工作，称之为并发安全
+3. 一定要避免数据竞争
+4. 不要使用共享数据来通信，而是使用通信来共享数据
+5. go的锁不能重入
+	举个例子：
+    var mu Sync.Mutex
+	func a(){
+		mu.Lock()
+		defer mu.Unlock()
+	}
+	
+	func b(){
+		mu.Lock()
+		defer mu.Unlock()
+		a()
+	}
+	// 直接死锁了
+6. 互斥锁 xx := sync.Mutex  xx.Lock() defer xx.Unlock()
+7. 读写锁 sync.RWMutex  写不加锁，读会加锁
+	1. 读锁 RLock() defer RUnLock()
+	2. 写锁 Lock() defer Unlock()
+8. 所有并发问题都可以用一致的、简单的既定模式来规避
+   1. 如果可能，将变量限定在goroutine内部
+   2. 如果是多个goroutine都要访问的变量 ，使用互斥条件访问
+``````
+
+
+
 ## 错误
 
 ``` 
