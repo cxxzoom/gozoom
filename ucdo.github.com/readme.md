@@ -571,7 +571,7 @@ print	println real	recover string  true	uint	uint8	uintptr
 8. close(ch)之后，还是可以接收之前已经发送成功的数据
 9. 如果channel中没有数据，将给零值
 10. 无缓冲channel  make(chan int) // unbuffered channel
-11. 无缓冲的channel： 发送者goroutine发送之后被阻塞，等到另一个gorouutine从相同的channel里接收了数据，然后继续执行各自后续的语句；接收者先发生，那么接收者也会被阻塞，直到另一个goroutine向相同的channel里面发送数据
+11. 无缓冲的channel： 发送者goroutine发送之后被阻塞，等到另一个goroutine从相同的channel里接收了数据，然后继续执行各自后续的语句；接收者先发生，那么接收者也会被阻塞，直到另一个goroutine向相同的channel里面发送数据
 12. 无缓冲channel：发送和接收都会导致两个goroutine做一次同步操作做；所以也被称之为 同步channels
 13. x事件在y事件之前发生 happends before
 14. 串联的channels（Pipeline） 管道
@@ -595,6 +595,20 @@ print	println real	recover string  true	uint	uint8	uintptr
         go func(){ch <- request("xxx.com")}()
         go func(){ch <- request("xxx.com")}()
         return <-ch
+    }
+29. 纠正一个错误： 从关闭的channel里面读取数据，并不会panic，也不会报错，只会返回chan T对应的零值
+30. channel当成同步机制的案例：
+	回想一下 <并发非阻塞缓存>
+	go e.call 和 go e.deliver
+
+	func (e *entry) call(f Func, key string) {
+        e.res.value, e.res.err = f(key)
+        close(e.ready)
+    }
+
+    func (e *entry) deliver(resp chan<- result) {
+        <-e.ready //  为什么这里会被阻塞？ 结合上面的代码来看，因为ready是个无buffer的channel。读空阻塞，call写入之后就可以了
+        resp <- e.res
     }
 ``````
 
@@ -628,6 +642,7 @@ print	println real	recover string  true	uint	uint8	uintptr
 8. 所有并发问题都可以用一致的、简单的既定模式来规避
    1. 如果可能，将变量限定在goroutine内部
    2. 如果是多个goroutine都要访问的变量 ，使用互斥条件访问
+9. 有数据竞争的时候记得要加锁；并且加合适的锁。
 ``````
 
 
