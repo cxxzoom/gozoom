@@ -64,3 +64,5 @@ func (e *entry) deliver(resp chan<- result) {
 	<-e.ready //  为什么这里会被阻塞？ 结合上面的代码来看，因为ready是个无buffer的channel。读空阻塞，call写入之后就可以了
 	resp <- e.res
 }
+
+func main() {}
