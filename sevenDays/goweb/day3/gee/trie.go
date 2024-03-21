@@ -2,7 +2,9 @@
 package gee
 
 // 设计一颗路由前缀树
-import "strings"
+import (
+	"strings"
+)
 
 // node 定义数的结构
 type node struct {
@@ -13,6 +15,7 @@ type node struct {
 }
 
 // matchChild 这玩意儿是递归匹配的一环
+// 用于写入
 func (n *node) matchChild(part string) *node {
 	for _, child := range n.children {
 		if child.part == part || child.isWild {
@@ -23,7 +26,8 @@ func (n *node) matchChild(part string) *node {
 	return nil
 }
 
-// matchChildren 返回当前这一层的所有parts
+// matchChildren 返回当前这一个节点的所有子节点
+// 用于查询
 func (n *node) matchChildren(part string) []*node {
 	nodes := make([]*node, 0)
 	for _, child := range n.children {
@@ -56,7 +60,7 @@ func (n *node) insert(pattern string, parts []string, height int) {
 
 // search 不晓得是做啥子得，只看出来是递归
 func (n *node) search(parts []string, height int) *node {
-	if len(parts) == height || strings.HasSuffix(n.part, "*") {
+	if len(parts) == height || strings.HasPrefix(n.part, "*") {
 		if n.pattern == "" {
 			return nil
 		}
