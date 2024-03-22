@@ -427,7 +427,8 @@ print	println real	recover string  true	uint	uint8	uintptr
     }
 3. defer语句中的函数会在return语句更新返回值变量后再执行
 4. 特别注意： 在fori，forr中defer会在最后才执行
-5. 
+5. 如果程序中发生了panic，但是还是会执行defer的函数
+6. 一个函数中的多个defer函数会逆序执行
 ```
 
 ## panic
@@ -438,7 +439,7 @@ print	println real	recover string  true	uint	uint8	uintptr
    通常，我们不需要再次运行程序去定位问题，日志信息已经提供了足够的诊断依据（一定什么事都要记录日志）
 3. 由于panic会引起程序的崩溃，因此panic一般用于严重错误，如程序内部的逻辑不一致
 4. 对于大部分漏洞，我们应该使用Go提供的错误机制，而不是panic，尽量避免程序的崩溃
-5. 
+5. 如果程序中发生了panic，但是还是会执行defer的函数
 ```
 
 ## recover -> 从panic中恢复正常
@@ -453,6 +454,9 @@ print	println real	recover string  true	uint	uint8	uintptr
 7. >< 自己测试了，如果recover会导致一些问题
    这里导致的问题就是如果在return前面panic了
    那么return的值不会按预期的返回，因为还没到return
+8. recover之后，从panic开始，后面的代码都不会执行（只是发生panic的这个func）
+    为什么？
+    因为是在defer里面执行的panic
 ```
 
 ## 方法 （OOP）
