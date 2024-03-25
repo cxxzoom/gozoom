@@ -2,20 +2,22 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
 	"os/exec"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type config struct {
-	user     string
-	password string
-	host     string
-	port     string
-	dbname   string
+	User     string `json:"user"`     // JSON键 "user" 映射到此字段
+	Password string `json:"password"` // JSON键 "password" 映射到此字段
+	Host     string `json:"host"`     // JSON键 "host" 映射到此字段
+	Port     string `json:"port"`     // JSON键 "port" 映射到此字段
+	DbName   string `json:"dbname"`   // JSON键 "dbname" 映射到此字段
 }
 
 type mysql struct {
@@ -24,7 +26,7 @@ type mysql struct {
 
 // 连接数据库
 func mysqlConn(config config) (*mysql, error) {
-	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.user, config.password, config.host, config.port, config.dbname)
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.User, config.Password, config.Host, config.Port, config.DbName)
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		return nil, err
@@ -41,17 +43,17 @@ func (m *mysql) updateUsers() {
 	}
 }
 
+const configPath = "config.json"
+
 func main() {
 	count := 0
-	cnf := config{
-		user:     "root",
-		password: "Cqzlyy@cqqy#8888",
-		host:     "localhost",
-		port:     "3306",
-		dbname:   "NuoHeTest_db",
+
+	cnf, err := getConfig()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	db, err := mysqlConn(cnf)
+	db, err := mysqlConn(*cnf)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,7 +61,7 @@ func main() {
 	defer db.Close()
 	log.Println(" 1 min modify wake password...")
 	// 定时执行修改密码的操作
-	ticker := time.NewTicker(9 * time.Second)
+	ticker := time.NewTicker(10 * time.Second)
 	for {
 		select {
 		case <-ticker.C:
@@ -71,6 +73,24 @@ func main() {
 		}
 	}
 
+}
+
+// getConfig 获取数据库配置文件
+func getConfig() (*config, error) {
+	jsonData, err := os.ReadFile(configPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cnf := config{}
+
+	// 解析 JSON 数据到 user 变量
+	err = json.Unmarshal(jsonData, &cnf)
+	if err != nil {
+		return nil, err
+	}
+
+	return &cnf, nil
 }
 
 // 清除屏幕
