@@ -11,7 +11,7 @@
 7. base: 变量申明 var identifier type
 8. base: 变量申明 identifier := value // 好像可以自动类型推断
 9. base: 只定义变量不复制，各有各的初始值
-10. const: 常量 ： const identi [type] = value
+10. const: 常量 ： const identity [type] = value
 11. iota : 初始0，一直 ++，有值跳过，无值赋值; 嗯这里iota的值，怪得很
 12. auto: 自动类型推断
 13. base: 无三目运算符
