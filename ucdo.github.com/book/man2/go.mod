@@ -1,5 +1,7 @@
-module man2
+module ucdo.github.com/book/man2
 
-go 1.21.6
+go 1.20
 
-require github.com/go-sql-driver/mysql v1.7.0 // indirect
+require github.com/go-sql-driver/mysql v1.8.0
+
+require filippo.io/edwards25519 v1.1.0 // indirect

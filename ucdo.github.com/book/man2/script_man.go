@@ -13,11 +13,12 @@ import (
 )
 
 type config struct {
-	User     string `json:"user"`     // JSON键 "user" 映射到此字段
-	Password string `json:"password"` // JSON键 "password" 映射到此字段
-	Host     string `json:"host"`     // JSON键 "host" 映射到此字段
-	Port     string `json:"port"`     // JSON键 "port" 映射到此字段
-	DbName   string `json:"dbname"`   // JSON键 "dbname" 映射到此字段
+	User      string `json:"user"`      // JSON键 "user" 映射到此字段
+	Password  string `json:"password"`  // JSON键 "password" 映射到此字段
+	Host      string `json:"host"`      // JSON键 "host" 映射到此字段
+	Port      string `json:"port"`      // JSON键 "port" 映射到此字段
+	DbName    string `json:"dbname"`    // JSON键 "dbname" 映射到此字段
+	CycleTime int    `json:"cycleTime"` // JSON键 "cycleTime" 映射到此字段
 }
 
 type mysql struct {
@@ -39,7 +40,7 @@ func (m *mysql) updateUsers() {
 	sql := "UPDATE judge_user set passwd = 'Adc@123' WHERE passwd = 123456"
 	_, err := m.Exec(sql)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
@@ -50,18 +51,18 @@ func main() {
 
 	cnf, err := getConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Println("pares json config err:", err)
 	}
 
 	db, err := mysqlConn(*cnf)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("conn database error:", err)
 	}
 
 	defer db.Close()
-	log.Println(" 1 min modify wake password...")
+	log.Printf(" %d sec modify wake password...\n", (*cnf).CycleTime)
 	// 定时执行修改密码的操作
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Duration((*cnf).CycleTime) * time.Second)
 	for {
 		select {
 		case <-ticker.C:
@@ -79,7 +80,7 @@ func main() {
 func getConfig() (*config, error) {
 	jsonData, err := os.ReadFile(configPath)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	cnf := config{}
