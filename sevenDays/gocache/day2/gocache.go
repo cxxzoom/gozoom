@@ -46,7 +46,7 @@ func NewGroup(name string, bytes int64, getter Getter) *Group {
 	return g
 }
 
-// 为什么这里要读锁：
+// GetGroup 为什么这里要读锁：
 // 因为是并发的，写go要有并发思维
 // 多个goroutine的读写操作可能会到值数据不一致；并且有可能崩溃
 func GetGroup(name string) *Group {

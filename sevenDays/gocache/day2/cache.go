@@ -14,7 +14,7 @@ type cache struct {
 func (c *cache) add(key string, value ByteView) {
 	c.mtx.Lock()
 	defer c.mtx.Unlock()
-	if c.lru != nil {
+	if c.lru == nil {
 		c.lru = lru.New(c.bytes, nil)
 	}
 	c.lru.Add(key, value)
