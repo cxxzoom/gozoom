@@ -1,3 +1,6 @@
 *.exe
 .idea
 *.json
+*.zip
+*.7z
+*.tar.gz
